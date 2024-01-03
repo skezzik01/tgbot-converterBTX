@@ -5,7 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_
 from config import SQLALCHEMY_URL
 from sqlalchemy import ForeignKey
 
+
 engine = create_async_engine(SQLALCHEMY_URL, echo=True)
+
 
 async_session = async_sessionmaker(engine)
 
@@ -24,6 +26,7 @@ class User(Base):
     limit: Mapped[int] = mapped_column(nullable=False, default=350)
     count_convert: Mapped[int] = mapped_column(nullable=False, default=0)
     date: Mapped[str] = mapped_column(nullable=False)
+    
     
 class Application(Base):
     __tablename__ = "applications"

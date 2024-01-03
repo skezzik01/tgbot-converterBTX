@@ -3,9 +3,11 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 from app.database.request import get_applications
 
+
 main = ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text="Профиль"), KeyboardButton(text="Подать заявку")],
 ], resize_keyboard=True, input_field_placeholder="Выберите действие")
+
 
 main_admin= ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text="Профиль"), KeyboardButton(text="Подать заявку")],
@@ -20,6 +22,7 @@ async def applications():
     for application in applications:
         applications_kb.add(InlineKeyboardButton(text=f"Заявка #{application.id}", callback_data=f'application_{application.id}'))
     return applications_kb.adjust(2).as_markup()
+
 
 async def create_applications():
     application_kb = InlineKeyboardBuilder()
