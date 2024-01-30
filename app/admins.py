@@ -2,7 +2,7 @@
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-from aiogram.filters import Command, Filter
+from aiogram.filters import Filter
 
 from app.database.request import get_admins, get_users_ids, delete_user, add_user_whitelist, delete_user_whitelist
 import app.keyboards as kb
@@ -49,7 +49,7 @@ async def newsletter_message(message: Message, state: FSMContext):
             await message.send_copy(chat_id=user_id)
         except:
             try:
-                await delete_user(user_id)
+                await delete_user(user_id=user_id)
             except:
                 continue
     
@@ -85,7 +85,7 @@ async def add_whitelist_confirmation(message: Message, state: FSMContext):
             await state.clear()
             await message.answer('Добавление в <i>Whitelist</i> прошло успешно!', reply_markup=kb.main_admin)
         except:
-            await message.answer('[Error #001] Отпишите @nzhasulan')
+            await message.answer('[Error #001] Отпишите <b>@nzhasulan</b>')
     else:
         await state.clear()
         await message.answer('Добавление в <i>Whitelist</i> отменено!', reply_markup=kb.main_admin)
@@ -114,7 +114,7 @@ async def del_whitelist_confirmation(message: Message, state: FSMContext):
             await state.clear()
             await message.answer('Удаление из <i>Whitelist</i> прошло успешно!', reply_markup=kb.main_admin)  
         except:
-            await message.answer('[Error #002] Отпишите @nzhasulan')      
+            await message.answer('[Error #002] Отпишите <b>@nzhasulan</b>')      
     else:
         await state.clear()
         await message.answer('Удаление из <i>Whitelist</i> отменено!', reply_markup=kb.main_admin)

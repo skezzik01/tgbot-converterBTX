@@ -28,13 +28,13 @@ async def profile_selected(message: Message):
     user_id = message.from_user.id
     user = await get_user(user_id=user_id)
 
-    await message.answer(f'<b>Профиль пользователя</b>\n\n<i>Имя пользователя: {user.name} ({user.tg_id})</i>\nДата регистраций: {user.date}\nКоличество конвертаций: {user.count_convert}')
+    await message.answer(f'<b>Профиль пользователя:</b>\n\n<i>Имя пользователя: {user.name} ({user.tg_id})</i>\nДата регистраций: {user.date}')
 
 
 @router.message(F.text == 'Конвертировать')
 async def create_convert(message: Message):
     if await get_whitelist(user_id=message.from_user.id) is None:
-        await message.answer('У вас нет доступа.\n\nКупить доступ – @alexblockone 💎')
+        await message.answer('У вас нет доступа.\n\nКупить доступ – @alexblockone')
         return
     else:
         await message.answer('Выберите вариант конвертаций:', reply_markup=await kb.create_convert())
