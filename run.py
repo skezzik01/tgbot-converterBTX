@@ -10,6 +10,7 @@ from app.convert import router as convert_router
 from app.database.models import async_main
 from config import TOKEN
 
+
 async def main():
     await async_main()
     

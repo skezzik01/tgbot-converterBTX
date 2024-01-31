@@ -55,34 +55,30 @@ async def convert_files(message: Message, state: FSMContext):
                 file_info = await message.bot.get_file(file_id)
                 file_path = file_info.file_path
                 file_name = message.document.file_name
-                await message.answer('Файл конвертируется...')
 
                 folder_path = "files_for_convert/" + str(message.from_user.id) + '/'
                 if not os.path.exists(folder_path + 'input_files/'):
                     os.makedirs(folder_path + 'input_files/')
-                await message.answer('Файл конвертируется...')
                     
                 await message.bot.download_file(file_path, folder_path + 'input_files/' + file_name)
                 await convert_pngtobtx(message, folder_path, file_name)
-                await message.answer('Файл конвертируется...')
 
                 output_folder_path = folder_path + 'output_files/'
                 converted_file_name = os.path.splitext(output_folder_path + file_name)
                 document_path = converted_file_name[0] + '.btx'
-                await message.answer('Файл конвертируется...')
                 
                 cat = FSInputFile(document_path)
                 if await get_admin(user_id=message.from_user.id):
                     await message.answer_document(cat, reply_markup=kb.main_admin)
                 else:
                     await message.answer_document(cat, reply_markup=kb.main)
-                await message.answer('Файл конвертируется...')
                 
 
                 os.remove(converted_file_name[0] + '.btx')
                 os.remove(folder_path + 'input_files/' + file_name)
 
-            except:
+            except Exception as e:
+                print('ERROR: ' + str(e))
                 if await get_admin(user_id=message.from_user.id):
                     await message.answer('[Error #100] Ошибка при конвертации файла! Перешлите это <b>@nzhasulan</b>', reply_markup=kb.main_admin)
                 else:
@@ -120,7 +116,8 @@ async def convert_files(message: Message, state: FSMContext):
 
                 os.remove(converted_file_name[0] + '.png')
                 os.remove(folder_path + 'input_files/' + file_name)
-            except:
+            except Exception as e:
+                print('ERROR: ' + str(e))
                 if await get_admin(user_id=message.from_user.id):
                     await message.answer('[Error #102] Ошибка при конвертации файла! Перешлите это <b>@nzhasulan</b>', reply_markup=kb.main_admin)
                 else:
@@ -140,7 +137,6 @@ async def convert_pngtobtx(message: Message, path, filename):
 
     filename1 = os.path.splitext(path + 'input_files/' + filename)
 
-    await message.answer('Файл конвертируется...')
     await convertprocess_pngtobtx(path + 'input_files/' + filename, message)
 
     output_folder = path + 'output_files/'
@@ -181,36 +177,29 @@ async def convert_btxtopng(message: Message, path, filename):
 
 
 async def convertprocess_pngtobtx(texturename, message: Message):
-    await message.answer(texturename)
     texture = pvrpy.PVRTexture(texturename)
-    await message.answer('Файл конвертируется...')
 
     if not texture.PreMultiplyAlpha():
         await message.answer('[Error #301] Ошибка при конвертации файла! Перешлите это <b>@nzhasulan</b>')
         os.remove(texturename)
-    await message.answer('Файл конвертируется...')
 
     if not texture.Bleed():
         await message.answer('[Error #302] Ошибка при конвертации файла! Перешлите это <b>@nzhasulan</b>')
         os.remove(texturename)
-    await message.answer('Файл конвертируется...')
 
     if not texture.GenerateMIPMaps(pvrpy.ResizeMode.Linear):
         await message.answer('[Error #303] Ошибка при конвертации файла! Перешлите это <b>@nzhasulan</b>')
         os.remove(texturename)
-    await message.answer('Файл конвертируется...')
 
     if not texture.Transcode(pvrpy.PixelFormat.ASTC_4x4, pvrpy.VariableType.UnsignedByteNorm, pvrpy.ColourSpace.sRGB,
                              pvrpy.CompressorQuality.ASTCExhaustive):
         await message.answer('[Error #304] Ошибка при конвертации файла! Перешлите это <b>@nzhasulan</b>')
         os.remove(texturename)
-    await message.answer('Файл конвертируется...')
 
     # sRGB создает потом надо на Linear, а то темно
     if texture.SetTextureColourSpace(pvrpy.ColourSpace.Linear) == False:
         await message.answer('[Error #305] Ошибка при конвертации файла! Перешлите это <b>@nzhasulan</b>')
         os.remove(texturename)
-    await message.answer('Файл конвертируется...')
 
     texturename1 = os.path.splitext(texturename)
 
@@ -218,7 +207,6 @@ async def convertprocess_pngtobtx(texturename, message: Message):
         await message.answer('[Error #306] Ошибка при конвертации файла! Перешлите это <b>@nzhasulan</b>')
         os.remove(texturename)
         os.remove(texturename1[0] + ".ktx")
-    await message.answer('Файл конвертируется...')
 
     ktx_file = open(texturename1[0] + '.ktx', 'r+b')
     original_bytes = ktx_file.read()
@@ -230,7 +218,6 @@ async def convertprocess_pngtobtx(texturename, message: Message):
     filename2 = os.path.splitext(texturename1[0] + '.ktx')
     if filename2[1] == '.ktx':
         os.rename(texturename1[0] + '.ktx', filename2[0] + '.btx')
-    await message.answer('Файл ...')
 
 
 async def convertprocess_btxtopng(texturename, message: Message):
