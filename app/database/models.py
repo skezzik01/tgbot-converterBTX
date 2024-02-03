@@ -21,7 +21,6 @@ class User(Base):
     tg_id = mapped_column(BigInteger)
     name: Mapped[str] = mapped_column(nullable=False)
     username: Mapped[str] = mapped_column(nullable=False)
-    count_convert: Mapped[int] = mapped_column(nullable=False, default=0)
     date: Mapped[str] = mapped_column(nullable=False)
     
 
@@ -41,14 +40,16 @@ class WhiteList(Base):
     date: Mapped[str] = mapped_column(nullable=False)
 
 
-class Application(Base):
-    __tablename__ = "applications"
+class CounterConvert(Base):
+    __tablename__ = "counter_convert"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(nullable=False)
     user_id: Mapped[int] = mapped_column(nullable=False)
-    convert_type: Mapped[str] = mapped_column(nullable=False)
-    files_id: Mapped[str] = mapped_column(nullable=False)
-    date: Mapped[str] = mapped_column(nullable=False)
+    status: Mapped[str] = mapped_column(nullable=False, default='unlock')
+    limit: Mapped[int] = mapped_column(default=500)
+    today: Mapped[int] = mapped_column(default=0)
+    total: Mapped[int] = mapped_column(default=0)
 
 
 async def async_main():

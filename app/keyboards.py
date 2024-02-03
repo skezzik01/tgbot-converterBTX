@@ -33,6 +33,7 @@ async def create_convert():
 async def admin_panel():
     admin_panel_kb = InlineKeyboardBuilder()
     admin_panel_kb.add(InlineKeyboardButton(text="WhiteList", callback_data='whitelist'))
+    admin_panel_kb.add(InlineKeyboardButton(text="Очистить файлы пользователей", callback_data='cleaning_files'))
     admin_panel_kb.add(InlineKeyboardButton(text="Оповещение всем пользователям", callback_data='notifyEveryone'))
     return admin_panel_kb.adjust(1).as_markup()
 

@@ -6,8 +6,10 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-from app.database.request import get_admin
+from app.database.request import get_admin, get_user, update_counters_convert, get_counter_convert
+from app.admins import maintenance
 import app.keyboards as kb
+
 
 router = Router()
 
@@ -15,10 +17,20 @@ router = Router()
 class Convert(StatesGroup):
     type = State()
     files = State()
-
+    
 
 @router.callback_query(F.data == 'convert_type_btxtopng')
 async def convert_type_btxtopng(callback: CallbackQuery, state: FSMContext):
+    if maintenance == True:
+        await callback.message.answer('Внимание! Проходят технические обновления. Приносим извинения за временные неудобства.')
+        return
+    
+    count_convert = await get_counter_convert(callback.message.from_user.id)
+    
+    """ if count_convert.today >= count_convert.limit:
+        await callback.message.answer('Конвертация запрещена. Превышен лимит конвертаций в день.')
+        return """
+    
     await state.update_data(type='btxtopng')
     await state.set_state(Convert.files)
     await callback.message.answer('Отправьте файлы для конвертации:', reply_markup=kb.cancel_convert)
@@ -26,6 +38,16 @@ async def convert_type_btxtopng(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == 'convert_type_pngtobtx')
 async def convert_type_pngtobtx(callback: CallbackQuery, state: FSMContext):
+    if maintenance == True:
+        await callback.answer('Внимание! Проходят технические обновления. Приносим извинения за временные неудобства.')
+        return
+    
+    count_convert = await get_counter_convert(callback.message.from_user.id)
+    
+    """ if count_convert.today >= count_convert.limit:
+        await callback.answer('Конвертация запрещена. Превышен лимит конвертаций в день.')
+        return """
+    
     await state.update_data(type='pngtobtx')
     await state.set_state(Convert.files)
     await callback.message.answer('Отправьте файлы для конвертации:', reply_markup=kb.cancel_convert)
@@ -43,10 +65,19 @@ async def cancel_convert(message: Message, state: FSMContext):
 
 @router.message(Convert.files)
 async def convert_files(message: Message, state: FSMContext):
+    if maintenance == True:
+        await message.answer('Внимание! Проходят технические обновления. Приносим извинения за временные неудобства.')
+        return
+    
+    """ count_convert = await get_counter_convert(message.from_user.id)
+    if count_convert.today >= count_convert.limit:
+        await message.answer('Конвертация запрещена. Превышен лимит конвертаций в день.')
+        return """
+    
     fileformat = message.document.file_name[-4:]
     convert_state = await state.get_data()
     convert_type = convert_state['type']
-
+    
 
     if convert_type == 'pngtobtx':
         if fileformat == '.png':
@@ -127,6 +158,8 @@ async def convert_files(message: Message, state: FSMContext):
                 await message.answer('[Warning #103] Неверный формат файла!', reply_markup=kb.main_admin)
             else:
                 await message.answer('[Warning #103] Неверный формат файла!', reply_markup=kb.main)
+                
+    await update_counters_convert(user_id=message.from_user.id)
 
     await state.clear()
 

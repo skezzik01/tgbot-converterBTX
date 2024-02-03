@@ -2,7 +2,8 @@
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart
 
-from app.database.request import get_application, add_user, get_user, get_whitelist, get_admin
+from app.database.request import add_user, get_user, get_whitelist, get_admin, add_counter_convert, get_counter_convert
+from app.convert import maintenance
 import app.keyboards as kb
 
 
@@ -27,8 +28,9 @@ async def start(message: Message):
 async def profile_selected(message: Message):
     user_id = message.from_user.id
     user = await get_user(user_id=user_id)
-
-    await message.answer(f'<b>Профиль пользователя:</b>\n\n<i>Имя пользователя: {user.name} ({user.tg_id})</i>\nДата регистраций: {user.date}')
+    count_user_convert = await get_counter_convert(user_id=user_id)
+    
+    await message.answer(f'<b>Профиль пользователя:</b>\n\n<i>Имя пользователя: {user.name} ({user.tg_id})</i>\nДата регистраций: {user.date}\n\nКонвертаций в день: {count_user_convert.today}\nОбщее кол-во конвертаций: {count_user_convert.total}')
 
 
 @router.message(F.text == 'Конвертировать')
@@ -37,6 +39,19 @@ async def create_convert(message: Message):
         await message.answer('У вас нет доступа.\n\nКупить доступ – @alexblockone')
         return
     else:
+        if not await get_counter_convert(user_id=message.from_user.id):
+            await add_counter_convert(user_id=message.from_user.id, name=message.from_user.first_name)
+            
+        if maintenance == True:
+            await message.answer('Внимание! Проходят технические обновления. Приносим извинения за временные неудобства.')
+            return
+        
+        count_convert = await get_counter_convert(message.from_user.id)
+        
+        """ if count_convert.today >= count_convert.limit:
+            await message.answer('Конвертация запрещена. Превышен лимит конвертаций в день.')
+            return """
+            
         await message.answer('Выберите вариант конвертаций:', reply_markup=await kb.create_convert())
     
 

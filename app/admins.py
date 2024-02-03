@@ -1,11 +1,17 @@
-﻿from aiogram import Router, F
+﻿import os
+import shutil
+
+from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Filter
 
-from app.database.request import get_admins, get_users_ids, delete_user, add_user_whitelist, delete_user_whitelist
+from app.database.request import get_admins, get_users_ids, delete_user, add_user_whitelist, delete_user_whitelist, update_counters_convert, clear_counters_convert
 import app.keyboards as kb
+
+
+maintenance = False
 
 
 router = Router()
@@ -118,3 +124,16 @@ async def del_whitelist_confirmation(message: Message, state: FSMContext):
     else:
         await state.clear()
         await message.answer('Удаление из <i>Whitelist</i> отменено!', reply_markup=kb.main_admin)
+        
+
+@router.callback_query(AdminProtect(), F.data == 'cleaning_files')
+async def cleaning_files(callback: CallbackQuery):
+    await callback.message.answer('Подождите... очистка файлов...')
+    maintenance = True
+    
+    folder_path = "files_for_convert/"
+    for file in os.listdir(folder_path):
+        shutil.rmtree(folder_path + file)
+        
+    maintenance = False
+    await callback.message.answer('Очистка файлов завершена!')

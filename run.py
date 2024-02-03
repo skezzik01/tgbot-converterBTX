@@ -1,12 +1,14 @@
 import sys
 import logging
 import asyncio
+from threading import Thread
+import schedule
 
 from aiogram import Bot, Dispatcher
 
 from app.handlers import router
 from app.admins import router as admin_router
-from app.convert import router as convert_router
+import app.convert as convert
 from app.database.models import async_main
 from config import TOKEN
 
@@ -16,7 +18,7 @@ async def main():
     
     bot = Bot(token=TOKEN, parse_mode='HTML')
     dp = Dispatcher()
-    dp.include_routers(router, admin_router, convert_router) # Роутеры
+    dp.include_routers(router, admin_router, convert.router) # Роутеры
     
     await dp.start_polling(bot)
 
