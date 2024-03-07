@@ -1,4 +1,4 @@
-![image](https://github.com/ZhasulanN10/tgbot-converterBTX/assets/85670918/e2d790f6-2a90-4e3a-9677-69a9f6012cb2)# BTX Converter (Telegram Bot)
+# BTX Converter (Telegram Bot)
 
 Converter для конвертирование текстур файлов игры `Black Russia` формат файла .btx.
 ## Зависимости
