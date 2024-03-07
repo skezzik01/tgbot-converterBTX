@@ -23,21 +23,8 @@ python .\run.py
 ```
 ![image](https://github.com/ZhasulanN10/tgbot-converterBTX/assets/85670918/e3b0d663-ba3b-4dac-b101-3873f788b86c)
 
+## Автор 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+**Жасулан** (_Zhasulan_) 
+- TG: @nzhasulan
+- VK: @nzhasulan
