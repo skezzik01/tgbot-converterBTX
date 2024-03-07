@@ -1,8 +1,6 @@
 import sys
 import logging
 import asyncio
-from threading import Thread
-import schedule
 
 from aiogram import Bot, Dispatcher
 
