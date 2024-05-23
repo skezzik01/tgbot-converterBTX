@@ -25,6 +25,6 @@ python .\run.py
 
 ## Автор 
 
-**Жасулан** (_Zhasulan_) 
-- TG: @nzhasulan
+**Жасулан** (_Kolson_) 
+- TG: @devkolson
 - VK: @nzhasulan
